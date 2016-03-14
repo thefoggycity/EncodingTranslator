@@ -8,6 +8,7 @@ A CLI tool to convert text-based documents from/to different codepages.
 
 ### Drag-and-drop
 > Method_1: Add the codepage index of source file to the beginning of its file name, such as change "foo.txt" in GB2312 encoding to "936_foo.txt", then drop the file onto this program. An output file named "foo.txt" in default encoding (should be Unicode) will be created in the same directory.
+
 > Method_2: Directly drop the file to be converted onto this program, then follow its interactive instructions. You can specify the output file's encoding, as well as the output file name (in the same directory of source file).
 
 ### In Command-Line prompt
