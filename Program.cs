@@ -78,12 +78,25 @@ namespace EncodingTranslator
                     }
                     else                                                    //Auto mode
                     {
+                        bool manmode = false;
                         try
                         {
                             encode = Convert.ToInt32(fname.Substring(0, fname.IndexOf("_")));
                             OutputPath = Path.GetDirectoryName(InputPath) + "\\" + Path.GetFileName(InputPath).Substring(fname.IndexOf("_") + 1);
+                            manmode = false;
                         }
                         catch (FormatException)                             //Not auto mode
+                        {
+                            manmode = true;
+                            goto MANMODE;
+                        }
+                        catch (OverflowException)
+                        {
+                            manmode = true;
+                            goto MANMODE;
+                        }
+                    MANMODE:
+                        if (manmode)
                         {
                             String enter;
                             Console.WriteLine("Code page index of source file (default UTF):");
