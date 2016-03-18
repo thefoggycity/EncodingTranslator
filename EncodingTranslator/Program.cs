@@ -26,10 +26,32 @@ namespace EncodingTranslator
                 if (File.Exists(args[0]))       //Is a path
                 {
                     InputPath = Path.GetFullPath(args[0]);
+                    bool manmode = false;
                     String fname;                    
                     fname = Path.GetFileNameWithoutExtension(InputPath);      //get name for auto mode
 
                     if (fname.IndexOf("_") == -1 || fname.IndexOf("_") == 0)  //Manual mode
+                    {
+                        manmode = true;
+                    }
+                    else                                                    //Auto mode
+                    {
+                        try
+                        {
+                            encode = Convert.ToInt32(fname.Substring(0, fname.IndexOf("_")));
+                            OutputPath = Path.GetDirectoryName(InputPath) + "\\" + Path.GetFileName(InputPath).Substring(fname.IndexOf("_") + 1);
+                            manmode = false;
+                        }
+                        catch (FormatException)                             //Not auto mode
+                        {
+                            manmode = true;
+                        }
+                        catch (OverflowException)
+                        {
+                            manmode = true;
+                        }
+                    }
+                    if (manmode)
                     {
                         String enter;
                         Console.WriteLine("Code page index of source file (default UTF):");
@@ -69,80 +91,12 @@ namespace EncodingTranslator
                             }
                         }
                         String outfname = Path.GetFileNameWithoutExtension(InputPath) + "_conv" + Path.GetExtension(InputPath);
-                        Console.WriteLine("Output file destination: ({0})",outfname);
+                        Console.WriteLine("Output file destination: ({0})", outfname);
                         Console.Write(Path.GetDirectoryName(InputPath) + "\\");
                         enter = Console.ReadLine();
                         if (!String.IsNullOrWhiteSpace(enter))
                             outfname = enter;
                         OutputPath = Path.GetDirectoryName(InputPath) + "\\" + outfname;
-                    }
-                    else                                                    //Auto mode
-                    {
-                        bool manmode = false;
-                        try
-                        {
-                            encode = Convert.ToInt32(fname.Substring(0, fname.IndexOf("_")));
-                            OutputPath = Path.GetDirectoryName(InputPath) + "\\" + Path.GetFileName(InputPath).Substring(fname.IndexOf("_") + 1);
-                            manmode = false;
-                        }
-                        catch (FormatException)                             //Not auto mode
-                        {
-                            manmode = true;
-                            goto MANMODE;
-                        }
-                        catch (OverflowException)
-                        {
-                            manmode = true;
-                            goto MANMODE;
-                        }
-                    MANMODE:
-                        if (manmode)
-                        {
-                            String enter;
-                            Console.WriteLine("Code page index of source file (default UTF):");
-                            bool redo = true;
-                            while (redo)
-                            {
-                                enter = Console.ReadLine();
-                                if (String.IsNullOrWhiteSpace(enter))
-                                    break;
-                                try
-                                {
-                                    encode = Convert.ToInt32(enter);
-                                    redo = false;
-                                }
-                                catch (FormatException)
-                                {
-                                    Console.WriteLine("Invaild input. Please retry:");
-                                    redo = true;
-                                }
-                            }
-                            Console.WriteLine("Code page index of destination file (default UTF):");
-                            redo = true;
-                            while (redo)
-                            {
-                                enter = Console.ReadLine();
-                                if (String.IsNullOrWhiteSpace(enter))
-                                    break;
-                                try
-                                {
-                                    OutEnc = Convert.ToInt32(enter);
-                                    redo = false;
-                                }
-                                catch (FormatException)
-                                {
-                                    Console.WriteLine("Invaild input. Please retry:");
-                                    redo = true;
-                                }
-                            }
-                            String outfname = Path.GetFileNameWithoutExtension(InputPath) + "_conv" + Path.GetExtension(InputPath);
-                            Console.WriteLine("Output file destination: ({0})", outfname);
-                            Console.Write(Path.GetDirectoryName(InputPath) + "\\");
-                            enter = Console.ReadLine();
-                            if (!String.IsNullOrWhiteSpace(enter))
-                                outfname = enter;
-                            OutputPath = Path.GetDirectoryName(InputPath) + "\\" + outfname;
-                        }
                     }
                 }
                 else
